@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Civic Education Quiz</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f7fb;--card:#fff;--ink:#14213d;--mut:#5b6785;--pri:#2563eb;--sel:#dbe7ff;--ok:#16a34a;--bad:#dc2626;--bd:#cfd8ea}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1729;--card:#1a2540;--ink:#f1f5ff;--mut:#a7b3d1;--pri:#5b8cff;--sel:#2a3d6e;--bd:#33446f}}
+:root[data-theme="dark"]{--bg:#0f1729;--card:#1a2540;--ink:#f1f5ff;--mut:#a7b3d1;--pri:#5b8cff;--sel:#2a3d6e;--bd:#33446f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:700}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+h1{font-size:28px;margin:0 0 8px}
+p{color:var(--mut);font-size:18px;line-height:1.4}
+button{font:inherit;cursor:pointer}
+.btn{width:100%;padding:16px;font-size:20px;border:0;border-radius:14px;background:var(--pri);color:#fff;margin-top:16px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:18px}
+.timer{width:64px;height:64px;position:relative;flex:none}
+.timer svg{transform:rotate(-90deg)}
+.timer span{position:absolute;inset:0;display:grid;place-items:center;font-size:22px}
+.q{font-size:22px;line-height:1.35;margin:8px 0 16px}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:14px;margin-bottom:10px;font-size:19px;border:3px solid var(--bd);border-radius:14px;background:var(--card);color:var(--ink)}
+.opt b{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--bd)}
+.opt.sel{border-color:var(--pri);background:var(--sel)}
+.opt.sel b{background:var(--pri);color:#fff}
+.bar{height:8px;background:var(--bd);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.bar i{display:block;height:100%;background:var(--pri);transition:width .3s}
+.big{font-size:64px;text-align:center;margin:12px 0}
+.center{text-align:center}
+.rev{margin-top:16px;font-size:17px}
+.rev div{padding:10px;border-radius:10px;margin-bottom:8px;background:var(--bg)}
+.hide{display:none}
+</style></head><body><div class="wrap">
+
+<div id="start" class="card center">
+<h1>⚖️ Civic Education Quiz</h1>
+<p>50 questions • 30 seconds each.<br>Pick an answer, then tap <b>Next</b>. Your score shows at the end.</p>
+<button class="btn" onclick="begin()">Start Quiz</button>
+</div>
+
+<div id="quiz" class="card hide">
+<div class="top"><div id="count"></div><div class="timer"><svg width="64" height="64"><circle cx="32" cy="32" r="28" fill="none" stroke="var(--bd)" stroke-width="6"/><circle id="ring" cx="32" cy="32" r="28" fill="none" stroke="var(--pri)" stroke-width="6" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="0"/></svg><span id="t">30</span></div></div>
+<div class="bar"><i id="prog"></i></div>
+<div class="q" id="q"></div>
+<div id="opts"></div>
+<button class="btn" id="next" onclick="next()" disabled>Next</button>
+</div>
+
+<div id="end" class="card hide center">
+<h1>Quiz Complete!</h1>
+<div class="big" id="score"></div>
+<p id="pct"></p>
+<p id="msg"></p>
+<button class="btn" onclick="toggleRev()">Review Answers</button>
+<div id="rev" class="rev hide" style="text-align:left"></div>
+<button class="btn" onclick="begin()">Play Again</button>
+</div>
+
+</div>
+<script>
+const Q=`The rule of law is the principle that everyone in a society is:|Ruled by leaders only|Subject to the law and obeys it|Above the law|Free from the law|1
+In the rule of law, who is above the law?|Nobody|The rich|Leaders|Government officials|0
+Under the rule of law, if a government official commits a crime, the person should be:|Treated according to the law|Protected because of their position|Rewarded|Ignored|0
+The rule of law says the law should govern the actions of individuals and:|Only judges|Only students|Only the poor|Institutions and government institutions|3
+Supremacy of the law means the law is the ___ authority in society.|Weakest|Lowest|Highest|Newest|2
+Equality before the law means all citizens are equal regardless of:|Their height|Their school|Social status, wealth, religion or occupation|Their age only|2
+Which principle says the courts should be free from interference?|Supremacy of the law|Immunity|Poverty|Independent judiciary|3
+Protection of human rights includes the right to:|Rule others|Life, freedom of expression and freedom of association|Ignore courts|Break the law|1
+Fair hearing means every accused person can defend himself before a competent and:|Impartial court|Secret court|Biased court|Weak court|0
+Presumption of innocence means an accused person is innocent until:|Arrested|Gossiped about|Proven guilty by a court of law|Accused|2
+Which feature means citizens and leaders are expected to obey the law?|Delay|Respect for the law|Corruption|Immunity|1
+Due process of law means government must follow:|Political pressure|Its own wishes|Rumours|Proper legal procedures before acting against a person|3
+Limitation of government power means officials cannot use powers without:|A car|A uniform|Legal authority|Permission from friends|2
+Which is an importance of the rule of law?|It promotes injustice|It supports corruption|It protects the rights and freedoms of citizens|It encourages lawlessness|2
+The rule of law promotes equality among:|Only leaders|Only judges|Only the wealthy|Citizens|3
+The rule of law checks abuse of:|Government power|Public holidays|Education|Farming|0
+The rule of law promotes peace and ___ in society.|Disorder|Noise|Order|Fear|2
+The rule of law provides a means of settling disputes:|By cheating|Peacefully|By force|By fighting|1
+Which of these is a feature of the rule of law?|Ignorance|Fair trial|Poverty|Corruption|1
+Which of these is a feature of the rule of law?|Immunity abuse|Delay in court|Lack of independence|Supremacy of the law|3
+The rule of law helps us to know what is right and:|Wrong|Late|Rich|Easy|0
+Which of these is a limitation to the application of the rule of law?|Fair trial|Immunity|Due process|Equality|1
+Legal immunity makes it difficult to take legal action against public officials:|Never|After they retire|At night|While they are in office|3
+During emergencies such as war, government may introduce temporary measures that:|Free all prisoners|Restrict some rights|End courts forever|Remove all laws|1
+Which of these is an example of an emergency situation?|School holiday|Natural disaster|Birthday party|Sports day|1
+Poverty limits the rule of law because poor citizens may not afford:|Television|Food only|Clothes only|Lawyers or other legal services|3
+Ignorance of the law means citizens may not know their:|Rights|Names|Age|Addresses|0
+Corruption among officials can:|Interfere with the proper administration of justice|Improve justice|Speed up justice|Protect the poor|0
+Delay in court cases may make people:|Obey more|Trust the courts more|Celebrate|Lose faith in the justice system|3
+If the judiciary is controlled by political leaders, the rule of law may:|Be perfectly applied|Not be properly applied|Become stronger|Be unnecessary|1
+Laws are a set of official rules and regulations that guide the ___ of people.|Food|Height|Names|Conduct and behaviour|3
+Which is a type of law in Nigeria?|Criminal law|Dance law|Weather law|Colour law|0
+Which is a type of law in Nigeria?|Song law|Magic law|Civil law|Game law|2
+Which is a type of law in Nigeria?|Sleeping law|Fashion law|Administrative law|Cartoon law|2
+Bye-laws, administrative laws and Sharia laws are:|Types of rivers|Types of foods|Types of laws in Nigeria|Types of crops|2
+Which factor ensures the creation of the rule of law?|Corruption|Poverty|Independence of the judiciary|Censorship|2
+Press freedom means the press can criticise the government constructively without being:|Threatened, censored or gagged|Paid|Educated|Praised|0
+The right to appeal means a person can go to ___ courts if they disagree with a judgement.|No|Lower|Fake|Higher|3
+Public enlightenment programmes educate people about their:|Rights|Birthdays|Pets|Hobbies|0
+A federal law based constitution is a factor that ensures the:|Rule of law|Delay|Corruption|Poverty|0
+Which principle says all citizens are treated the same by the law?|Equality before the law|Corruption|Immunity|Poverty|0
+Which principle says an accused person must be given a chance to defend himself?|Delay|Lack of independence|Fair hearing|Presumption of guilt|2
+Which principle protects freedom of association?|Delay|Emergency|Protection of human rights|Immunity|2
+Which is NOT a principle of the rule of law?|Presumption of guilt|Equality before the law|Supremacy of the law|Fair hearing|0
+"Nobody is above the law" best explains:|The rule of law|Corruption|Poverty|Immunity|0
+Which limitation makes it hard for citizens to seek justice because they do not know their rights?|Emergency|Immunity|Delay|Ignorance of the law|3
+Which would BEST help the rule of law work well?|An independent judiciary|Corruption|Lack of education|Delay in court|0
+Why is the right to appeal important?|It delays justice on purpose|It lets people seek justice from higher courts|It punishes judges|It stops all cases|1
+Which of these weakens respect for the law?|Corruption|Public enlightenment|Fair trial|Press freedom|0
+Educating the public on their rights helps them to know how to:|Seek redress when their rights are infringed|Avoid courts|Break the law|Hide from police|0`.split("\n").map(l=>{const p=l.split("|");return{q:p[0],o:p.slice(1,5),a:+p[5]}});
+const L="ABCD",T=30;
+let i=0,sel=null,left=T,iv=null,ans=[];
+const $=id=>document.getElementById(id);
+function show(id){["start","quiz","end"].forEach(s=>$(s).classList.toggle("hide",s!==id))}
+function begin(){i=0;ans=[];$("rev").classList.add("hide");show("quiz");load()}
+function load(){
+ sel=null;left=T;const x=Q[i];
+ $("count").textContent="Question "+(i+1)+" of "+Q.length;
+ $("prog").style.width=(i/Q.length*100)+"%";
+ $("q").textContent=x.q;
+ $("opts").innerHTML="";
+ x.o.forEach((t,k)=>{const b=document.createElement("button");b.className="opt";b.innerHTML="<b>"+L[k]+"</b><span></span>";b.lastChild.textContent=t;b.onclick=()=>pick(k);$("opts").appendChild(b)});
+ $("next").textContent=i==Q.length-1?"Submit":"Next";
+ $("next").disabled=true;
+ tick();clearInterval(iv);iv=setInterval(()=>{left--;tick();if(left<=0)next()},1000);
+}
+function tick(){$("t").textContent=left;$("ring").style.strokeDashoffset=176*(1-left/T);$("ring").style.stroke=left<=10?"var(--bad)":"var(--pri)"}
+function pick(k){sel=k;[...$("opts").children].forEach((b,j)=>b.classList.toggle("sel",j==k));$("next").disabled=false}
+function next(){
+ clearInterval(iv);ans[i]=sel;
+ if(i<Q.length-1){i++;load()}else finish();
+}
+function finish(){
+ const s=ans.reduce((n,a,k)=>n+(a===Q[k].a?1:0),0),p=Math.round(s/Q.length*100);
+ $("score").textContent=s+" / "+Q.length;
+ $("pct").textContent=p+"%";
+ $("msg").textContent=p>=80?"🌟 Excellent work!":p>=60?"👍 Good job! Keep practising.":p>=40?"🙂 Fair attempt. Revise and try again.":"📚 Keep studying, you can do better!";
+ $("rev").innerHTML="";
+ Q.forEach((x,k)=>{const d=document.createElement("div"),ok=ans[k]===x.a;
+  d.textContent=(ok?"✅ ":"❌ ")+(k+1)+". "+x.q+" — Answer: "+x.o[x.a]+(ok?"":(ans[k]==null?" (no answer)":" (you chose: "+x.o[ans[k]]+")"));
+  $("rev").appendChild(d)});
+ show("end");
+}
+function toggleRev(){$("rev").classList.toggle("hide")}
+</script></body></html>
